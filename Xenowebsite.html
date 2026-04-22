@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Xeno Photography</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      color: #333;
+      scroll-behavior: smooth;
+    }
+    header {
+      background-color: #000;
+      color: white;
+      position: sticky;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      padding: 20px 10px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }
+    header h1 {
+      margin: 0 0 5px;
+      font-size: 2.5em;
+    }
+    nav a {
+      color: white;
+      font-weight: bold;
+      margin: 0 15px;
+      text-decoration: none;
+      font-size: 1.1em;
+      cursor: pointer;
+    }
+    nav a:hover,
+    nav a:focus {
+      color: #d2aaf8;
+      outline: none;
+      text-decoration: underline;
+    }
+    main {
+      max-width: 1200px;
+      margin: 40px auto 80px;
+      padding: 0 20px;
+    }
+    section {
+      padding-bottom: 80px;
+    }
+    section h2 {
+      font-size: 2em;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    section p.description {
+      max-width: 800px;
+      margin: 0 auto 30px;
+      line-height: 1.6;
+      text-align: center;
+    }
+    #bgVideo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .gallery-item {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      transition: box-shadow 0.3s ease;
+    }
+    .gallery-item:hover,
+    .gallery-item:focus {
+      box-shadow: 0 4px 12px rgb(0 0 0 / 0.3);
+      outline: none;
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 8px 8px 0 0;
+      transition: transform 0.3s ease;
+    }
+    .gallery-item img:hover {
+      transform: scale(1.05);
+    }
+    .gallery-item p {
+      margin: 12px 0 15px;
+      font-weight: bold;
+      font-size: 1.05em;
+      padding: 0 10px 10px;
+    }
+
+    #about p {
+      font-size: 1.1em;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.7;
+      color: #222;
+    }
+    #contact form {
+      max-width: 480px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      background: white;
+      padding: 30px 25px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgb(0 0 0 / 0.1);
+    }
+    #contact label {
+      font-weight: bold;
+      margin-top: 15px;
+      margin-bottom: 6px;
+    }
+    #contact input,
+    #contact textarea {
+      padding: 10px;
+      font-size: 1em;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      resize: vertical;
+    }
+    #contact textarea {
+      min-height: 100px;
+    }
+    #contact button {
+      margin-top: 25px;
+      background: #6a0dad;
+      color: white;
+      font-weight: bold;
+      font-size: 1.1em;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    #contact button:hover,
+    #contact button:focus {
+      background: #530a9d;
+      outline: none;
+    }
+    footer {
+      background-color: #000;
+      color: white;
+      text-align: center;
+      padding: 12px 10px;
+      font-size: 0.9em;
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+      left: 0;
+      user-select: none;
+    }
+
+    #recBox {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #d2aaf8;
+      border-radius: 15px;
+      padding: 30px 60px;
+      box-shadow: 0 0 30px #a159db;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.25em;
+      color: black;
+      z-index: 2000;
+      display: none;
+      max-width: 320px;
+      width: 90%;
+    }
+    #recBox svg {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 18px;
+      stroke: black;
+      vertical-align: middle;
+    }
+    #recOkBtn {
+      margin-top: 20px;
+      background: white;
+      border: 2px solid #6a0dad;
+      color: #6a0dad;
+      padding: 10px 40px;
+      border-radius: 8px;
+      font-size: 1.15em;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s ease;
+      display: inline-block;
+    }
+    #recOkBtn:hover,
+    #recOkBtn:focus {
+      background: #6a0dad;
+      color: white;
+      outline: none;
+    }
+
+    #modalOverlay {
+      display: none;
+      position: fixed;
+      z-index: 3000;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+      overflow: auto;
+      padding: 20px;
+    }
+    #modalContent {
+      background: white;
+      border-radius: 15px;
+      max-width: 480px;
+      width: 100%;
+      padding: 25px 30px;
+      box-shadow: 0 0 25px #6a0dadaa;
+      position: relative;
+      font-size: 1.1em;
+      color: #111;
+    }
+    #modalContent h3 {
+      margin-top: 0;
+      color: #6a0dad;
+      text-align: center;
+      font-size: 1.8em;
+    }
+    #modalContent p {
+      margin: 10px 0 18px;
+      line-height: 1.5;
+    }
+    #modalClose {
+      position: absolute;
+      top: 12px;
+      right: 15px;
+      background: transparent;
+      border: none;
+      font-size: 1.6em;
+      font-weight: bold;
+      color: #6a0dad;
+      cursor: pointer;
+    }
+    #modalClose:hover, #modalClose:focus {
+      color: #3f006f;
+      outline: none;
+    }
+
+    @media (max-width: 768px) {
+      header h1 { font-size: 2em; }
+      nav a { font-size: 1em; margin: 0 10px; }
+      #modalContent {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+<video autoplay muted loop id="bgVideo">
+  <source src="https://www.pexels.com/download/video/5177675/" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+<header>
+  <h1>Xeno Photography</h1>
+  <nav aria-label="Primary">
+    <a href="#portfolio" tabindex="0">Portfolio</a>
+    <a href="#about" tabindex="0">About</a>
+    <a href="#contact" tabindex="0">Contact</a>
+  </nav>
+</header>
+
+<main>
+  <section id="portfolio" tabindex="-1" aria-label="Portfolio section">
+    <h2>Discover Our Curated Portfolio</h2>
+    <p class="description">From Tamil, Telugu, Christian, Muslim, and Brahmin weddings to pre-wedding shoots and cinematic wedding films, our work reflects creativity and attention to detail. Explore our stunning visuals that capture love, joy, and traditions in every frame. Let our portfolio inspire your dream wedding photography experience.</p>
+    <div class="gallery" role="list">
+      <!-- Each gallery-item has data attributes describing details shown in modal -->
+      <div class="gallery-item" role="listitem" tabindex="0"
+        data-title="Wedding photography"
+        data-about="Traditional wedding photography capturing vibrant ceremonies and cultural rituals."
+        data-duration="8 hours"
+        data-cost="₹50,000"
+      >
+        <img src="https://i.ytimg.com/vi/7V5p_utRaiA/maxresdefault.jpg" alt="Wedding" />
+        <p>Weddings</p>
+      </div>
+      <div class="gallery-item" role="listitem" tabindex="0"
+        data-title="pre-Wedding photography"
+        data-about="Romantic pre-wedding shoots in stunning locations that tell your love story."
+        data-duration="10 hours"
+        data-cost="₹55,000"
+      >
+        <img src="https://photographerphuketthailand.com/wp-content/uploads/2023/09/bw4a0212.jpg" alt="pre Wedding" />
+        <p>pre-Wedding</p>
+      </div>
+      <div class="gallery-item" role="listitem" tabindex="0"
+        data-title="Puberty/Half-Saree function"
+        data-about="combine the rituals of a puberty ceremony with the vibrant aesthetic of a haldi function, focusing on a girl's transition to womanhood."
+        data-duration="6 hours"
+        data-cost="₹45,000"
+      >
+        <img src="https://images.ctfassets.net/ssn6gmzvvg61/6e7AKNdaIPi3RAy9b9B4d1/6ac34c1fd19e2085162657b27013a60f/DSC07616.jpg" alt="Christian Wedding" />
+        <p>Puberty/Half-Saree function</p>
+      </div>
+      <div class="gallery-item" role="listitem" tabindex="0"
+        data-title="Inauguration functions"
+        data-about="capturing the moment key individuals, often business leaders or officials, cut a large ribbon with oversized scissors to symbolically open a new business, project, or facility."
+        data-duration="9 hours"
+        data-cost="₹52,000"
+      >
+        <img src="https://www.shutterstock.com/image-photo/ribbon-cut-ceremony-outdoors-building-600nw-2338615981.jpg" alt="Inauguration/Ribbon cutting photoshoot" />
+        <p>Inauguration function</p>
+      </div>
+      <div class="gallery-item" role="listitem" tabindex="0"
+        data-title="Birthday party"
+        data-about="Beautiful photography spotlighting birthday's joyous celebrations."
+        data-duration="7 hours"
+        data-cost="₹48,000"
+      >
+        <img src="https://5.imimg.com/data5/SELLER/Default/2024/7/436343426/TG/PO/WS/199127969/birthday-party-photography-services.jpg" alt="Birthday party" />
+        <p>Birthday party</p>
+      </div>
+      <div class="gallery-item" role="listitem" tabindex="0"
+        data-title="Concerts and Live Performances"
+        data-about="captures the energy and atmosphere of a live event by photographing performers and the audience."
+        data-duration="5 hours"
+        data-cost="₹30,000"
+      >
+        <img src="https://www.adobe.com/lu_en/creativecloud/photography/discover/media_15cd5d2510ca0ba505f075118a853bdea496c55d2.png?width=750&format=png&optimize=medium" alt="Concerts and Live Performances" />
+        <p>Concerts and Live Performances</p>
+      </div>
+      <div class="gallery-item" role="listitem" tabindex="0"
+        data-title="Sports events"
+        data-about="Captures the raw emotions of athletic triumph, focusing on jubilant athletes on a multi-tiered podium."
+        data-duration="Full Day"
+        data-cost="₹80,000"
+      >
+        <img src="https://ca-times.brightspotcdn.com/dims4/default/f5cab5a/2147483647/strip/false/crop/4165x2777+0+0/resize/1486x991!/quality/75/?url=https%3A%2F%2Fcalifornia-times-brightspot.s3.amazonaws.com%2F9b%2Fcb%2F033cc9834de7923c3a721f8b2a58%2Fparis-olympics-artistic-gymnastics-85191.jpg" alt="Sports events" /> 
+        <p>Sports events</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" tabindex="-1" aria-label="About section">
+    <h2>About Xeno Photography</h2>
+    <p>At Xeno Photography, we believe every love story deserves to be captured with artistry and authenticity. Our passionate team specializes in diverse cultural weddings, creating timeless memories through breathtaking imagery. Combining natural light, creative composition, and genuine moments, we make your special day unforgettable. Trust us to narrate your unique story—frame by frame.</p>
+  </section>
+
+  <section id="contact" tabindex="-1" aria-label="Contact section">
+    <h2>Contact Us</h2>
+    <form id="contactForm" novalidate>
+      <label for="name">Full Name</label>
+      <input type="text" id="name" name="name" placeholder="Your full name" required />
+
+      <label for="email">Email Address</label>
+      <input type="email" id="email" name="email" placeholder="Your email address" required />
+
+      <label for="message">Message</label>
+      <textarea id="message" name="message" placeholder="Write your message here" required></textarea>
+
+      <button type="submit">Send Message</button>
+    </form>
+  </section>
+</main>
+
+<footer>
+  &copy; 2023 Xeno Photography. All rights reserved.
+</footer>
+
+<!-- Modal for photo details -->
+<div id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
+  <div id="modalContent">
+    <button id="modalClose" aria-label="Close details">&times;</button>
+    <h3 id="modalTitle"></h3>
+    <p id="modalAbout"></p>
+    <p><strong>Duration:</strong> <span id="modalDuration"></span></p>
+    <p><strong>Cost:</strong> <span id="modalCost"></span></p>
+  </div>
+</div>
+
+<!-- Recommendation Message Box -->
+<div id="recBox" role="alert" aria-live="assertive" aria-atomic="true" aria-relevant="text">
+  <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+  <div>Thanks for leaving a recommendation!</div>
+  <button id="recOkBtn" aria-label="Close recommendation message">Ok</button>
+</div>
+
+<script>
+  // Smooth focus after anchor scroll for accessibility 
+  const sections = document.querySelectorAll('main section');
+  window.addEventListener('hashchange', () => {
+    const id = window.location.hash.substring(1);
+    const section = document.getElementById(id);
+    if (section) {
+      section.focus();
+    }
+  });
+
+  // Contact form handler
+  const form = document.getElementById('contactForm');
+  const recBox = document.getElementById('recBox');
+  const recOkBtn = document.getElementById('recOkBtn');
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    form.reset();
+
+    recBox.style.display = 'block';
+    recOkBtn.focus();
+  });
+
+  recOkBtn.addEventListener('click', () => {
+    recBox.style.display = 'none';
+  });
+
+  // Modal logic for photo details
+  const galleryItems = document.querySelectorAll('.gallery-item');
+  const modal = document.getElementById('modalOverlay');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalAbout = document.getElementById('modalAbout');
+  const modalDuration = document.getElementById('modalDuration');
+  const modalCost = document.getElementById('modalCost');
+  const modalClose = document.getElementById('modalClose');
+
+  galleryItems.forEach(item => {
+    item.addEventListener('click', () => {
+      openModal(item);
+    });
+    // Also allow keyboard (Enter or Space) to open modal on gallery items
+    item.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openModal(item);
+      }
+    });
+  });
+
+  modalClose.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+  // Close modal on Escape key
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && modal.style.display === 'flex') {
+      closeModal();
+    }
+  });
+
+  function openModal(item) {
+    modalTitle.textContent = item.getAttribute('data-title') || '';
+    modalAbout.textContent = item.getAttribute('data-about') || '';
+    modalDuration.textContent = item.getAttribute('data-duration') || '';
+    modalCost.textContent = item.getAttribute('data-cost') || '';
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden', 'false');
+    modalClose.focus();
+  }
+
+  function closeModal() {
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden', 'true');
+  }
+</script>
+
+</body>
+</html>
